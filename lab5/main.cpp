@@ -97,6 +97,6 @@ int main(int argc, char* argv[]){
     }
     string filepath = argv[1];
     solve(filepath);
-    
+
     return 0;
 }
