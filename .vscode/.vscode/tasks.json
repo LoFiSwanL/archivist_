@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build all CPP (PowerShell)",
+        "type": "shell",
+        "command": "powershell",
+        "args": [
+          "-Command",
+          "g++",
+          "-std=c++20",
+          "-fdiagnostics-color=always",
+          "-g",
+          "$(Get-ChildItem -Path '${fileDirname}' -Filter *.cpp | ForEach-Object { $_.FullName })",
+          "-o",
+          "'${fileDirname}\\main.exe'"
+        ],
+        "options": {
+          "cwd": "${fileDirname}"
+        },
+        "problemMatcher": ["$gcc"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "detail": "Compiles all .cpp files in the folder using PowerShell"
+      }
+    ]
+  }
+  
