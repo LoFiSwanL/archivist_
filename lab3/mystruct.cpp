@@ -1,3 +1,4 @@
+//var 6
 #include "mystruct.h"
 #include <iostream>
 #include <stdexcept>
