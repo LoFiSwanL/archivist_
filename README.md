@@ -11,7 +11,7 @@ A basic file archiver implemented in modern C++ using Huffman compression algori
 - Simple CLI interface
 
 🛠 Technologies Used:
-- C++17
+- C++17/C++20
 - STL: vector, map, priority_queue, fstream, etc.
 - Bit-level operations
 - File I/O
@@ -43,13 +43,11 @@ A basic file archiver implemented in modern C++ using Huffman compression algori
    ./archiver -c input.txt output.archive
    ./archiver -d output.archive output.txt
 
-
 ✅ Future Improvements:
 - Support for compressing multiple files (like .zip)
 - Custom archive format
 - GUI version with Qt
 - Benchmarking against existing tools
-
 
 📚 What I Learned:
 - How Huffman compression works
