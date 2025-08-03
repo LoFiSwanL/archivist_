@@ -1,3 +1,0 @@
-F:/C++/out/build/gcc-debug/CMakeFiles/main.dir
-F:/C++/out/build/gcc-debug/CMakeFiles/edit_cache.dir
-F:/C++/out/build/gcc-debug/CMakeFiles/rebuild_cache.dir
