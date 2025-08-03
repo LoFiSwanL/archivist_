@@ -43,11 +43,13 @@ A basic file archiver implemented in modern C++ using Huffman compression algori
    ./archiver -c input.txt output.archive
    ./archiver -d output.archive output.txt
 
+
 ✅ Future Improvements:
 - Support for compressing multiple files (like .zip)
 - Custom archive format
 - GUI version with Qt
 - Benchmarking against existing tools
+
 
 📚 What I Learned:
 - How Huffman compression works
