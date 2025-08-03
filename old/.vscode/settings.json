@@ -1,0 +1,32 @@
+{
+    "files.associations": {
+        "new": "cpp",
+        "iostream": "cpp",
+        "iosfwd": "cpp",
+        "string": "cpp",
+        "format": "cpp",
+        "cmath": "cpp",
+        "functional": "cpp",
+        "ostream": "cpp",
+        "tuple": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "span": "cpp",
+        "unordered_map": "cpp",
+        "initializer_list": "cpp",
+        "atomic": "cpp",
+        "iterator": "cpp",
+        "text_encoding": "cpp",
+        "stdexcept": "cpp",
+        "variant": "cpp",
+        "editor.semanticHighlighting.enabled": "true",
+        "C_Cpp.enhancedColorization": "Enabled",
+        "git.enabled": "false",
+        "scm.providers.visible": "0",
+        "git.decorations.enabled": "false",
+        "fstream": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}
