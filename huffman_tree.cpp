@@ -23,16 +23,37 @@ Node *build_huffman_tree(const std::vector<std::pair<char, int>> &frequencies)
 
         min_cluster.push(parent);
     }
-    
+
     return min_cluster.top();
 }
 
 void generate_code(Node *root, std::vector<bool> way, std::unordered_map<char, std::vector<bool>> &container)
 {
-
+    if(!root){
+        return;
+    }
+    if(!root->left && !root->right){
+        container[root->letter] = way;
+        return;
+    }
+    if(root->left){
+        std::vector<bool> left_way = way;
+        left_way.push_back(false);
+        generate_code(root->left, left_way, container);
+    }
+    if(root->right){
+        std::vector<bool> right_way = way;
+        right_way.push_back(true);
+        generate_code(root->right, right_way, container);
+    }
 }
 
 void delete_all(Node *root)
 {
-
+    if(!root){
+        return;
+    }
+    delete_all(root->left);
+    delete_all(root->right);
+    delete root;
 }
