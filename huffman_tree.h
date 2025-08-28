@@ -2,8 +2,8 @@
 #include <iostream>
 #include <queue>
 #include <vector>
-
-using namespace std;
+#include <map>
+#include <unordered_map>
 
 struct Node{
     char letter;
@@ -15,7 +15,11 @@ struct Node{
 };
 
 struct Compare{
-    bool operator()(Node* left_, Node* right_){
-        return left_->frequency > right_->frequency;
-    }
+    bool operator()(Node* left_, Node* right_);
 };
+
+Node* build_huffman_tree(const std::vector<std::pair<char, int>>& frequencies);
+
+void generate_code(Node* root, std::vector<bool> way, std::unordered_map<char, std::vector<bool>>& container);
+
+void delete_all(Node* root);
