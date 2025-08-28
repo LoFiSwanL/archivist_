@@ -47,8 +47,3 @@ A basic file archiver implemented in modern C++ using Huffman compression algori
 - Custom archive format
 - GUI version with Qt
 - Benchmarking against existing tools
-
-<<<<<<< HEAD
-=======
-
->>>>>>> b138309d9dc997121b1ff6d1c437a9e19d34a160
