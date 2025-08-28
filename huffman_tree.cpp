@@ -23,6 +23,8 @@ Node *build_huffman_tree(const std::vector<std::pair<char, int>> &frequencies)
 
         min_cluster.push(parent);
     }
+    
+    return min_cluster.top();
 }
 
 void generate_code(Node *root, std::vector<bool> way, std::unordered_map<char, std::vector<bool>> &container)
