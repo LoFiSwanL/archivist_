@@ -49,8 +49,3 @@ A basic file archiver implemented in modern C++ using Huffman compression algori
 - GUI version with Qt
 - Benchmarking against existing tools
 
-📚 What I Learned:
-- How Huffman compression works
-- Efficient bit-level file writing
-- Designing modular C++ applications
-
