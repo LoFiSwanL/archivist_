@@ -1,5 +1,4 @@
-README: Pet Projects in C++
-1. 🔐 Simple File Archiver (C++)
+🔐 Simple File Archiver (C++)
 
 A basic file archiver implemented in modern C++ using Huffman compression algorithm. The goal of this project was to explore file compression techniques and get hands-on experience with bit manipulation, file I/O, and algorithm implementation.
 
@@ -49,3 +48,7 @@ A basic file archiver implemented in modern C++ using Huffman compression algori
 - GUI version with Qt
 - Benchmarking against existing tools
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b138309d9dc997121b1ff6d1c437a9e19d34a160
