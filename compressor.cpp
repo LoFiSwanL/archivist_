@@ -21,3 +21,27 @@ vector<char> binary_read_func(const string &filepath)
 
     return buffer;
 }
+
+vector<int> build_frequency_table(const vector<char> &data)
+{
+    vector<int> frequencyMap(256, 0);
+
+    for (char byte: data) {
+        frequencyMap[static_cast<unsigned char>(byte)]++;
+    }
+
+    return frequencyMap;
+}
+
+vector<pair<char, int>> prepare_frequencies(const vector<int> &frequencies)
+{
+    vector<pair<char, int>> freq_pairs;
+
+    for(int i = 0; i < 256; ++i){
+        if(frequencies[i] > 0){
+            freq_pairs.push_back({static_cast<char>(i), frequencies[i]});
+        }
+    }
+
+    return freq_pairs;
+}
