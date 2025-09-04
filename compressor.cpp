@@ -8,7 +8,7 @@ vector<char> binary_read_func(const string &filepath)
 {
     ifstream file(filepath, ios::binary);
     if(!file.is_open()){
-        cerr << "could not open file" << endl;
+        cerr << "could not open file for compress" << endl;
         return {};
     }
     
