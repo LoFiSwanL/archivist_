@@ -45,3 +45,57 @@ vector<pair<char, int>> prepare_frequencies(const vector<int> &frequencies)
 
     return freq_pairs;
 }
+
+vector<char> pack_bits(const vector<bool> &bits)
+{
+    vector<char> bit_buffer; 
+    char current_bit = 0;
+    int count_bit = 0;
+
+    for(vector<bool>::const_iterator it = bits.cbegin(); it != bits.cend(); ++it){
+        current_bit <<= 1;
+        current_bit |= *it;
+        count_bit += 1;
+        if(count_bit == 8){
+            bit_buffer.push_back(current_bit);
+            current_bit = 0;
+            count_bit = 0;
+        }
+    }
+    if(count_bit > 0){
+            current_bit <<= 8 - count_bit;
+            current_bit |= 0;
+            bit_buffer.push_back(current_bit);
+            current_bit = 0;
+            count_bit = 0;
+        }
+
+    return bit_buffer;
+}
+
+void write_compress_words(const string &filepath, const unordered_map<char, vector<bool>> &codes, const vector<char> &original_data)
+{
+    ofstream file(filepath, ios::binary);
+    if(!file.is_open()){
+        cerr << "could not open file" << endl;
+        return;
+    }
+
+    uint16_t table_size = codes.size();
+    file.put(static_cast<char>(table_size & 0xFF));
+    file.put(static_cast<char>((table_size >> 8) & 0xFF));
+
+    for(const auto &pair: codes){
+        char symbol = pair.first;
+        const vector<bool> &code = pair.second;
+        file.put(symbol);
+
+        uint8_t length = code.size();
+        file.put(length);
+        vector<char> packed_code = pack_bits(code);
+
+        for(char b: packed_code){
+            file.put(b);
+        }
+    }
+}
