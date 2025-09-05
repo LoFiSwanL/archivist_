@@ -5,31 +5,6 @@
 
 using namespace std;
 
-// vector<bool> read_table(ifstream &file)
-// {
-//     ifstream file(file, ios::binary);
-//     if(!file.is_open()){
-//         cerr << "can't open file for decompress";
-//         return {};
-//     }
-//     file.seekg(0, ios::end);
-//     size_t size = file.tellg();
-//     file.seekg(0, ios::beg);
-
-//     vector<char> buffer(size);
-//     file.read(buffer.data(), size);
-
-//     vector<bool> bits;
-//     for(unsigned char byte: buffer){
-//         for(int i = 7; i >= 0; --i){
-//             bool bit = (byte >> i) & 1;
-//             bits.push_back(bit);
-//         }
-//     }
-
-//     return bits;
-// }
-
 unordered_map<char, vector<bool>> read_table(ifstream &file)
 {
     unordered_map<char, vector<bool>> table;
@@ -85,5 +60,39 @@ vector<bool> read_compress(ifstream &file)
 
 vector<char> decode_data(const unordered_map<char, vector<bool>> &codes, const vector<bool> &compress_bits)
 {
-    
+    vector<char> decoded_data;
+    vector<bool> curr_code;
+
+    for(bool bit: curr_code){
+        curr_code.push_back(bit);
+        for(const auto &pair: codes){
+            if(pair.second == curr_code){
+                decoded_data.push_back(pair.first);
+                curr_code.clear();
+                break;
+            }
+        }
+
+    }
+    return decoded_data;
+}
+
+void decompress_file(const std::string &input_filepath, std::string &output_filepath)
+{
+    ifstream file(input_filepath, ios::binary);
+    if(!file.is_open()){
+        cerr << "input file cannot open for decompress" << endl;
+        return;
+    }
+
+    auto codes = read_table(file);
+    auto compress_bits = read_compress(file);
+    auto decoded_data = decode_data(codes, compress_bits);
+
+    ofstream out_file(output_filepath, ios::binary);
+    if(!file.is_open()){
+        cerr << "output file cannot open for decompress" << endl;
+        return;
+    }
+    out_file.write(decoded_data.data(), decoded_data.size());
 }
