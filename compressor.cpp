@@ -63,11 +63,8 @@ vector<char> pack_bits(const vector<bool> &bits)
         }
     }
     if(count_bit > 0){
-            current_bit <<= 8 - count_bit;
-            current_bit |= 0;
+            current_bit <<= (8 - count_bit);
             bit_buffer.push_back(current_bit);
-            current_bit = 0;
-            count_bit = 0;
         }
 
     return bit_buffer;
@@ -97,5 +94,8 @@ void write_compress_words(const string &filepath, const unordered_map<char, vect
         for(char b: packed_code){
             file.put(b);
         }
+        cout << "Symbol: " << symbol << ", length: " << (int)length << ", packed bytes: " << packed_code.size() << endl;
     }
+    
+    file.close();
 }
