@@ -12,7 +12,7 @@ unordered_map<char, vector<bool>> read_table(ifstream &file)
     char byte1, byte2;
     file.get(byte1);
     file.get(byte2);
-    table_size = (static_cast<uint8_t>(byte2 << 8) | static_cast<uint8_t>(byte1));
+    table_size = (static_cast<uint16_t>(static_cast<uint8_t>(byte2)) << 8) | static_cast<uint8_t>(byte1);
 
     for(uint16_t i = 0; i < table_size; ++i){
         char symbol; 
@@ -23,11 +23,12 @@ unordered_map<char, vector<bool>> read_table(ifstream &file)
         int bits_read = 0;
 
         while(bits_read < code_length){
-            char code_bytes;
-            file.get(code_bytes);
+            char code_byte;
+            file.get(code_byte);
+            int bits_to_read = min(8, code_length - bits_read);
 
-            for(int g = 7; g >= 0; --i){
-                bool bit = (code_bytes >> g) & 1;
+            for(int g = 7; g >= 8 - bits_to_read; --g){
+                bool bit = (code_byte >> g) & 1;
                 code_bits.push_back(bit);
                 ++bits_read;
             }
@@ -63,7 +64,7 @@ vector<char> decode_data(const unordered_map<char, vector<bool>> &codes, const v
     vector<char> decoded_data;
     vector<bool> curr_code;
 
-    for(bool bit: curr_code){
+    for(bool bit: compress_bits){
         curr_code.push_back(bit);
         for(const auto &pair: codes){
             if(pair.second == curr_code){
@@ -90,7 +91,7 @@ void decompress_file(const std::string &input_filepath, std::string &output_file
     auto decoded_data = decode_data(codes, compress_bits);
 
     ofstream out_file(output_filepath, ios::binary);
-    if(!file.is_open()){
+    if(!out_file.is_open()){
         cerr << "output file cannot open for decompress" << endl;
         return;
     }
