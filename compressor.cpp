@@ -46,28 +46,30 @@ vector<pair<char, int>> prepare_frequencies(const vector<int> &frequencies)
     return freq_pairs;
 }
 
-vector<char> pack_bits(const vector<bool> &bits)
+vector<char> pack_bits(const vector<bool>& bits, uint32_t &bit_count)
 {
-    vector<char> bit_buffer; 
-    char current_bit = 0;
-    int count_bit = 0;
+    vector<char> buffer;
+    uint8_t byte = 0;
+    int bitPos = 0;
+    bit_count = bits.size();
 
-    for(vector<bool>::const_iterator it = bits.cbegin(); it != bits.cend(); ++it){
-        current_bit <<= 1;
-        current_bit |= *it;
-        count_bit += 1;
-        if(count_bit == 8){
-            bit_buffer.push_back(current_bit);
-            current_bit = 0;
-            count_bit = 0;
+    for(bool b : bits){
+        byte <<= 1;
+        if(b) byte |= 1;
+        bitPos++;
+        if(bitPos == 8){
+            buffer.push_back(byte);
+            byte = 0;
+            bitPos = 0;
         }
     }
-    if(count_bit > 0){
-            current_bit <<= (8 - count_bit);
-            bit_buffer.push_back(current_bit);
-        }
 
-    return bit_buffer;
+    if(bitPos > 0){
+        byte <<= (8 - bitPos);
+        buffer.push_back(byte);
+    }
+
+    return buffer;
 }
 
 void write_compress_words(const string &filepath, const unordered_map<char, vector<bool>> &codes, const vector<char> &original_data)
@@ -89,12 +91,27 @@ void write_compress_words(const string &filepath, const unordered_map<char, vect
 
         uint8_t length = code.size();
         file.put(length);
-        vector<char> packed_code = pack_bits(code);
+        uint32_t dummy;
+        vector<char> packed_code = pack_bits(code, dummy);
 
         for(char b: packed_code){
             file.put(b);
         }
-        cout << "Symbol: " << symbol << ", length: " << (int)length << ", packed bytes: " << packed_code.size() << endl;
+    }
+
+    vector<bool> all_bits;
+    for(char c: original_data){
+        const vector<bool>& code = codes.at(c);
+        all_bits.insert(all_bits.end(), code.begin(), code.end());
+    }
+
+    uint32_t bit_count = all_bits.size();
+    vector<char> compressed_bytes = pack_bits(all_bits, bit_count);
+
+    file.write(reinterpret_cast<const char*>(&bit_count), sizeof(bit_count));
+    
+    for(char b: compressed_bytes){
+        file.put(b);
     }
     
     file.close();
