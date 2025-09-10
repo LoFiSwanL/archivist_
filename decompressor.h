@@ -4,11 +4,8 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <cstdint>
 
-std::unordered_map<char, std::vector<bool>> read_table(std::ifstream &file);
+void decompress_file(const std::string &input_filepath, const std::string &output_filepath);
 
-std::vector<bool> read_compress(std::ifstream &file);
-
-std::vector<char> decode_data(const std::unordered_map<char, std::vector<bool>> &codes, const std::vector<bool> &compress_bits);
-
-void decompress_file(const std::string &input_filepath, std::string &output_filepath);
+std::vector<bool> unpack_bits(std::ifstream &file, uint32_t bit_count);

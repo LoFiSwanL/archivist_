@@ -1,99 +1,81 @@
 #include "decompressor.h"
-#include "huffman_tree.h"
-#include "cstdio"
 #include <cstdint>
 
 using namespace std;
 
-unordered_map<char, vector<bool>> read_table(ifstream &file)
-{
-    unordered_map<char, vector<bool>> table;
-    uint16_t table_size;
-    char byte1, byte2;
-    file.get(byte1);
-    file.get(byte2);
-    table_size = (static_cast<uint16_t>(static_cast<uint8_t>(byte2)) << 8) | static_cast<uint8_t>(byte1);
-
-    for(uint16_t i = 0; i < table_size; ++i){
-        char symbol; 
-        file.get(symbol);
-        uint8_t code_length;
-        file.get(reinterpret_cast<char&> (code_length));
-        vector<bool> code_bits;
-        int bits_read = 0;
-
-        while(bits_read < code_length){
-            char code_byte;
-            file.get(code_byte);
-            int bits_to_read = min(8, code_length - bits_read);
-
-            for(int g = 7; g >= 8 - bits_to_read; --g){
-                bool bit = (code_byte >> g) & 1;
-                code_bits.push_back(bit);
-                ++bits_read;
-            }
-        }
-        table[symbol] = code_bits;
-    }
-    
-    return table;
-}
-
-vector<bool> read_compress(ifstream &file)
-{
-    streampos current_pos = file.tellg();
-    file.seekg(0, ios::end);
-    size_t size = file.tellg() - current_pos;
-    file.seekg(current_pos);
-    vector<char> bufffer(size);
-    file.read(bufffer.data(), size);
-
+vector<bool> unpack_bits(ifstream &file, uint32_t bit_count) {
     vector<bool> bits;
+    bits.reserve(bit_count);
 
-    for(unsigned char byte: bufffer){
-        for(int i = 7; i >= 0; --i){
-            bool bit = (byte >> i) & 1;
-            bits.push_back(bit);
+    uint8_t byte;
+    for (uint32_t i = 0; i < (bit_count + 7) / 8; ++i) {
+        file.read(reinterpret_cast<char*>(&byte), 1);
+        int bits_in_this_byte = min(8u, bit_count - i * 8);
+        for (int j = 7; j >= 8 - bits_in_this_byte; --j) {
+            bits.push_back((byte >> j) & 1);
         }
     }
     return bits;
 }
 
-vector<char> decode_data(const unordered_map<char, vector<bool>> &codes, const vector<bool> &compress_bits)
-{
+void decompress_file(const string &input_filepath, const string &output_filepath) {
+    ifstream file(input_filepath, ios::binary);
+    if (!file.is_open()) {
+        cerr << "Cannot open input file: " << input_filepath << endl;
+        return;
+    }
+
+    uint16_t table_size;
+    char byte1, byte2;
+    file.get(byte1);
+    file.get(byte2);
+    table_size = (static_cast<uint8_t>(byte2) << 8) | static_cast<uint8_t>(byte1);
+
+    unordered_map<char, vector<bool>> codes;
+    for (uint16_t i = 0; i < table_size; ++i) {
+        char symbol;
+        file.get(symbol);
+
+        uint8_t length;
+        file.get(reinterpret_cast<char&>(length));
+
+        vector<bool> code_bits;
+        int bits_read = 0;
+        while (bits_read < length) {
+            char code_byte;
+            file.get(code_byte);
+            int bits_to_read = min(8, length - bits_read);
+            for (int j = 7; j >= 8 - bits_to_read; --j) {
+                code_bits.push_back((code_byte >> j) & 1);
+                ++bits_read;
+            }
+        }
+        codes[symbol] = code_bits;
+    }
+
+    uint32_t bit_count;
+    file.read(reinterpret_cast<char*>(&bit_count), sizeof(bit_count));
+
+    vector<bool> compressed_bits = unpack_bits(file, bit_count);
+
     vector<char> decoded_data;
     vector<bool> curr_code;
-
-    for(bool bit: compress_bits){
+    for (bool bit : compressed_bits) {
         curr_code.push_back(bit);
-        for(const auto &pair: codes){
-            if(pair.second == curr_code){
-                decoded_data.push_back(pair.first);
+        for (auto &p : codes) {
+            if (p.second == curr_code) {
+                decoded_data.push_back(p.first);
                 curr_code.clear();
                 break;
             }
         }
-
     }
-    return decoded_data;
-}
 
-void decompress_file(const std::string &input_filepath, std::string &output_filepath)
-{
-    ifstream file(input_filepath, ios::binary);
-    if(!file.is_open()){
-        cerr << "input file cannot open for decompress" << endl;
+    ofstream out(output_filepath, ios::binary);
+    if (!out.is_open()) {
+        cerr << "Cannot open output file: " << output_filepath << endl;
         return;
     }
-
-    auto codes = read_table(file);
-    auto compress_bits = read_compress(file);
-    auto decoded_data = decode_data(codes, compress_bits);
-
-    ofstream out_file(output_filepath, ios::binary);
-    if(!out_file.is_open()){
-        cerr << "output file cannot open for decompress" << endl;
-        return;
-    }
-    out_file.write(decoded_data.data(), decoded_data.size());
+    out.write(decoded_data.data(), decoded_data.size());
+    out.close();
 }
