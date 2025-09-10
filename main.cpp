@@ -8,7 +8,7 @@
 using namespace std;
 
 int main() {
-    vector<char> data = binary_read_func("F:/C++/file.txt");
+    vector<char> data = binary_read_func("F:/C_++/file.txt");
 
     vector<int> freq = build_frequency_table(data);
 
@@ -26,7 +26,7 @@ int main() {
         cout << endl;
     }
 
-    write_compress_words("F:/C++/file.huff", codes, data);
+    write_compress_words("F:/C_++/file.huff", codes, data);
 
     delete_all(root);
 
